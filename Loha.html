@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iPaSoon - Large File Upload</title>
+    <title>iPaSoon - نظام الرفع الذكي</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -18,8 +18,8 @@
 
     <div class="max-w-5xl mx-auto">
         <div class="text-center mb-10">
-            <h1 class="text-3xl font-black text-slate-800 tracking-tighter">نظام الرفع العملاق (Releases)</h1>
-            <p class="text-blue-600 font-bold mt-2 italic">مخصص لملفات IPA الكبيرة والشهادات</p>
+            <h1 class="text-3xl font-black text-slate-800 tracking-tighter">نظام الرفع العملاق (appiraq.com)</h1>
+            <p class="text-blue-600 font-bold mt-2 italic">مخصص لملفات IPA والشهادات عبر GitHub Releases</p>
         </div>
 
         <div class="upload-card p-8 mb-8 border-b-8 border-blue-600">
@@ -41,7 +41,6 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
             <div class="upload-card p-6 border-t-8 border-purple-500 min-h-[400px]">
                 <h2 class="text-xl font-black mb-6 flex items-center gap-2 text-purple-700">
                     <i class="fas fa-certificate"></i> سجل روابط الشهادات
@@ -59,14 +58,14 @@
                     <p class="text-center text-gray-400 py-10">لا توجد تطبيقات مرفوعة</p>
                 </div>
             </div>
-
         </div>
     </div>
 
     <script>
+        // الإعدادات المحدثة بناءً على مستودعك الجديد
         const TOKEN = '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';
         const USER = 'ipasoon';
-        const REPO = 'ipasoon.github.io';
+        const REPO = 'ipasoon-install'; // تم التعديل هنا
         const TAG = 'v1.0.0';
 
         async function uploadToRelease() {
@@ -116,14 +115,14 @@
 
                 if (uploadRes.ok) {
                     progressBar.style.width = '100%';
-                    alert("تم الرفع بنجاح!");
+                    alert("تم الرفع بنجاح إلى " + REPO);
                     loadReleaseAssets();
                 } else {
                     const error = await uploadRes.json();
                     alert("خطأ: " + (error.errors && error.errors[0].code === 'already_exists' ? "الملف موجود مسبقاً" : "فشل الرفع"));
                 }
 
-            } catch (err) { alert("حدث خطأ في الاتصال"); } 
+            } catch (err) { alert("حدث خطأ في الاتصال بالسيرفر"); } 
             finally { btnText.disabled = false; status.classList.add('hidden'); }
         }
 
@@ -140,33 +139,26 @@
                 certBox.innerHTML = '';
                 ipaBox.innerHTML = '';
                 
-                let certCounter = 0;
-
-                data.assets.forEach((asset, index) => {
+                data.assets.forEach((asset) => {
                     const downloadUrl = `https://github.com/${USER}/${REPO}/releases/download/${TAG}/${asset.name}`;
                     const isIpa = asset.name.toLowerCase().endsWith('.ipa');
                     
                     const itemHtml = `
-                        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                        <div class="bg-gray-50 p-4 rounded-2xl border border-gray-100 mb-3">
                             <div class="flex items-center justify-between mb-2">
                                 <span class="text-xs font-bold text-slate-500 truncate w-40">${asset.name}</span>
-                                <span class="bg-white px-2 py-1 rounded text-[10px] border border-gray-200">Asset</span>
+                                <span class="bg-white px-2 py-1 rounded text-[10px] border border-gray-200">Release Asset</span>
                             </div>
                             <div class="flex gap-2">
-                                <input readonly value="${downloadUrl}" class="text-[9px] bg-white border p-2 rounded-lg flex-1 outline-none font-mono">
+                                <input readonly value="${downloadUrl}" class="text-[9px] bg-white border p-2 rounded-lg flex-1 outline-none font-mono text-blue-600">
                                 <button onclick="copy('${downloadUrl}')" class="bg-slate-800 text-white px-3 py-1 rounded-lg text-xs hover:bg-slate-700">نسخ</button>
                             </div>
                         </div>`;
 
                     if (isIpa) {
-                        ipaBox.innerHTML += itemHtml + '<div class="divider"></div>';
+                        ipaBox.innerHTML += itemHtml;
                     } else {
                         certBox.innerHTML += itemHtml;
-                        certCounter++;
-                        // وضع حاجز (فاصل) كل ملفين شهادة
-                        if (certCounter % 2 === 0) {
-                            certBox.innerHTML += '<div class="divider"></div>';
-                        }
                     }
                 });
             } catch (e) { console.error("Error loading assets"); }
@@ -174,7 +166,7 @@
 
         function copy(text) {
             navigator.clipboard.writeText(text);
-            alert("تم النسخ!");
+            alert("تم نسخ الرابط المباشر!");
         }
 
         loadReleaseAssets();
